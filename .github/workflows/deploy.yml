@@ -2,7 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # This repo has no separate main branch yet — everything lives on
+    # claude/gifted-sagan-pr1gy2. Deploy from there; add "main" here too
+    # if/when this work is merged into one.
+    branches: [claude/gifted-sagan-pr1gy2]
   workflow_dispatch:
 
 permissions:
