@@ -1,0 +1,85 @@
+:root {
+  --wood-dark: #3b2415;
+  --wood: #8a5a2b;
+  --wood-light: #caa068;
+  --leaf-deep: #14563c;
+  --leaf: #2f8f79;
+  --moss: #7cc04a;
+  --sky: #6fcfeb;
+  --cream: #fdf7ea;
+  --ink: #2b1d10;
+  --orange: #f08a3c;
+  --shadow: 0 18px 34px rgba(24, 12, 4, 0.32);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--wood-dark);
+  color: var(--ink);
+  font-family: 'Baloo 2', 'Nunito', 'Quicksand', 'Segoe UI', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(120% 80% at 50% 0%, #2b1a10 0%, #1a0f08 100%);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.notice {
+  margin: 3rem auto;
+  color: var(--cream);
+  font-size: 1.05rem;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.notice--error {
+  color: #ffcfc2;
+}
+
+.error {
+  margin: 0.25rem 0 0;
+  color: #b3341f;
+  font-size: 0.9rem;
+}
+
+.footnote {
+  margin: 0;
+  padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+  color: rgba(253, 247, 234, 0.42);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

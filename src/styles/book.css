@@ -1,0 +1,234 @@
+/* ---------- A book standing on a shelf ---------- */
+
+.book {
+  position: relative;
+  flex: 0 0 auto;
+  width: 56px;
+  height: var(--book-h, 82px);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transform: rotateY(-6deg) rotate(var(--lean, 0deg)) translateZ(0);
+  transform-origin: bottom center;
+  transition: transform 0.22s ease, filter 0.22s ease;
+  animation: book-arrive 0.45s cubic-bezier(0.2, 1.2, 0.4, 1);
+}
+
+.book:hover,
+.book:focus-visible {
+  transform: translateY(-8px) rotateY(0deg) scale(1.06);
+  z-index: 3;
+  outline: none;
+}
+
+.book__spine {
+  position: absolute;
+  left: -5px;
+  top: 2px;
+  bottom: 0;
+  width: 8px;
+  border-radius: 3px 0 0 3px;
+  background: linear-gradient(180deg, var(--spine) 0%, rgba(0, 0, 0, 0.55) 100%);
+  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.4);
+}
+
+.book__face {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 2px 5px 5px 2px;
+  background: var(--spine);
+  border: 2px solid var(--spine);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.45);
+}
+
+.book__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book__photo--empty {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.12) 0 6px,
+    rgba(255, 255, 255, 0.04) 6px 12px
+  );
+}
+
+.book__sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 45%);
+  pointer-events: none;
+}
+
+.book--unread {
+  filter: grayscale(0.5) brightness(0.62) contrast(0.95);
+}
+
+.book--unread:hover {
+  filter: grayscale(0.2) brightness(0.85);
+}
+
+.book--read .book__face {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45), 0 0 12px rgba(255, 224, 138, 0.55);
+}
+
+.book__leaf {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #14563c;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.book__title {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 10px 3px 3px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.78));
+  color: #fff;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  pointer-events: none;
+}
+
+@keyframes book-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) rotateZ(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotateY(-6deg);
+  }
+}
+
+@media (min-width: 900px) {
+  .book {
+    width: 64px;
+  }
+}
+
+/* ---------- The opened book ---------- */
+
+.open-book {
+  position: relative;
+  display: flex;
+  width: min(880px, 94vw);
+  max-height: 88vh;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(90deg, #f7eeda 0%, #fdf7ea 48%, #e9dcc2 50%, #fdf7ea 52%, #f7eeda 100%);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+  animation: open-book 0.35s ease;
+}
+
+@keyframes open-book {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(-22deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0) scale(1);
+  }
+}
+
+.open-book__page {
+  flex: 1 1 50%;
+  padding: clamp(1.1rem, 3vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.open-book__page--left {
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.open-book__page--right {
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.open-book__set {
+  margin: 0;
+  color: var(--leaf-deep);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.open-book__title {
+  margin: 0;
+  font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.open-book__status {
+  margin: 0 0 0.75rem;
+  color: #7a6a55;
+  font-weight: 600;
+}
+
+.open-book__status.is-read {
+  color: #1f7a53;
+}
+
+.open-book__photo {
+  max-width: 100%;
+  max-height: min(62vh, 460px);
+  border-radius: 8px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+  object-fit: contain;
+}
+
+.open-book__photo--loading {
+  width: 180px;
+  height: 240px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.open-book__footer {
+  margin-top: 1rem;
+}
+
+.open-book__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+@media (max-width: 720px) {
+  .open-book {
+    flex-direction: column-reverse;
+    background: var(--cream);
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .open-book__page--right {
+    padding-bottom: 0;
+  }
+}

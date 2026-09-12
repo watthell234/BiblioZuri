@@ -1,0 +1,346 @@
+/* ---------- Chrome: top bar, buttons, sheets, celebration ---------- */
+
+.topbar {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: calc(0.75rem + env(safe-area-inset-top)) clamp(1rem, 4vw, 2rem) 0.75rem;
+  color: var(--cream);
+}
+
+.topbar__title {
+  margin: 0;
+  font-size: clamp(1.3rem, 4vw, 1.85rem);
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.topbar__sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.6rem 1.15rem;
+  border: none;
+  border-radius: 999px;
+  background: rgba(253, 247, 234, 0.92);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.pill:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.pill:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pill--primary {
+  background: linear-gradient(180deg, #35a37c, #1f7a53);
+  color: #fff;
+}
+
+.pill--save {
+  width: 100%;
+  margin-top: 0.5rem;
+  background: linear-gradient(180deg, #f7a94f, #e2802b);
+  color: #3a1f06;
+}
+
+.pill--read {
+  align-self: flex-start;
+  background: linear-gradient(180deg, #35a37c, #1f7a53);
+  color: #fff;
+  font-size: 1.05rem;
+  padding: 0.7rem 1.6rem;
+}
+
+.pill--undo {
+  background: rgba(0, 0, 0, 0.08);
+  color: #5c4a33;
+  font-size: 0.95rem;
+}
+
+.topbar__add {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .topbar__add {
+    display: inline-flex;
+  }
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.fab {
+  position: fixed;
+  right: clamp(1rem, 4vw, 2rem);
+  bottom: calc(clamp(1rem, 4vh, 2rem) + env(safe-area-inset-bottom));
+  z-index: 6;
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f7a94f, #e2802b);
+  color: #3a1f06;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+}
+
+.fab:hover {
+  transform: scale(1.05);
+}
+
+@media (min-width: 720px) {
+  .fab {
+    display: none;
+  }
+}
+
+.link {
+  border: none;
+  background: none;
+  color: #6b5a44;
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.35rem 0.4rem;
+}
+
+.link--danger {
+  color: #b3341f;
+  font-weight: 700;
+}
+
+.confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #6b5a44;
+  flex-wrap: wrap;
+}
+
+/* ---------- Add-book sheet ---------- */
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(12, 7, 3, 0.72);
+  backdrop-filter: blur(3px);
+  animation: fade-in 0.2s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sheet {
+  width: min(460px, 100%);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: var(--cream);
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sheet__head h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.sheet__preview {
+  display: grid;
+  place-items: center;
+  padding: 0.5rem 0;
+}
+
+.preview-book {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 210px;
+  border-radius: 4px 10px 10px 4px;
+  background: linear-gradient(135deg, #2f8f79, #14563c);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  text-align: center;
+}
+
+.preview-book img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-book__hint {
+  padding: 0 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+}
+
+.preview-book__spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.35));
+}
+
+.sheet__actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.sheet__actions .pill {
+  flex: 1 1 auto;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5c4a33;
+}
+
+.field input,
+.field select {
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--leaf);
+}
+
+/* ---------- Celebration ---------- */
+
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.celebration__bit {
+  position: absolute;
+  font-size: 1.6rem;
+  animation: burst 1.5s cubic-bezier(0.15, 0.8, 0.3, 1) forwards;
+  animation-delay: var(--delay);
+  opacity: 0;
+}
+
+@keyframes burst {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateY(0) rotate(calc(-1 * var(--angle))) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateY(calc(-1 * var(--distance)))
+      rotate(calc(-1 * var(--angle))) scale(1.15);
+  }
+}
+
+.celebration__word {
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  background: rgba(20, 86, 60, 0.95);
+  color: #fff;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 800;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
+  animation: pop 1.6s ease forwards;
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
