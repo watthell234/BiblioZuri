@@ -1,4 +1,4 @@
-import { COVERS_BUCKET, supabase } from './supabase'
+import { BOOKS_TABLE, COVERS_BUCKET, SHELVES_TABLE, supabase } from './supabase'
 import { pickAccent, pickSpineColor } from './palette'
 import type { Backend, Book, Shelf } from './types'
 
@@ -45,8 +45,8 @@ export const supabaseBackend: Backend = {
   async load() {
     const db = client()
     const [shelves, books] = await Promise.all([
-      db.from('shelves').select('*').order('position'),
-      db.from('books').select('*').order('position'),
+      db.from(SHELVES_TABLE).select('*').order('position'),
+      db.from(BOOKS_TABLE).select('*').order('position'),
     ])
     if (shelves.error) throw shelves.error
     if (books.error) throw books.error
@@ -58,10 +58,10 @@ export const supabaseBackend: Backend = {
 
   async addShelf(name) {
     const db = client()
-    const { count } = await db.from('shelves').select('id', { count: 'exact', head: true })
+    const { count } = await db.from(SHELVES_TABLE).select('id', { count: 'exact', head: true })
     const position = count ?? 0
     const { data, error } = await db
-      .from('shelves')
+      .from(SHELVES_TABLE)
       .insert({ name, accent: pickAccent(position), position })
       .select()
       .single()
@@ -70,7 +70,7 @@ export const supabaseBackend: Backend = {
   },
 
   async renameShelf(id, name) {
-    const { error } = await client().from('shelves').update({ name }).eq('id', id)
+    const { error } = await client().from(SHELVES_TABLE).update({ name }).eq('id', id)
     if (error) throw error
   },
 
@@ -87,13 +87,13 @@ export const supabaseBackend: Backend = {
     for (const upload of uploads) if (upload.error) throw upload.error
 
     const { count } = await db
-      .from('books')
+      .from(BOOKS_TABLE)
       .select('id', { count: 'exact', head: true })
       .eq('shelf_id', shelfId)
     const position = count ?? 0
 
     const { data, error } = await db
-      .from('books')
+      .from(BOOKS_TABLE)
       .insert({
         id,
         shelf_id: shelfId,
@@ -115,7 +115,7 @@ export const supabaseBackend: Backend = {
 
   async setRead(id, isRead) {
     const { data, error } = await client()
-      .from('books')
+      .from(BOOKS_TABLE)
       .update({ is_read: isRead, read_at: isRead ? new Date().toISOString() : null })
       .eq('id', id)
       .select()
@@ -126,10 +126,10 @@ export const supabaseBackend: Backend = {
 
   async deleteBook(id) {
     const db = client()
-    const { data, error } = await db.from('books').select('*').eq('id', id).single()
+    const { data, error } = await db.from(BOOKS_TABLE).select('*').eq('id', id).single()
     if (error) throw error
     const row = data as BookRow
-    const removed = await db.from('books').delete().eq('id', id)
+    const removed = await db.from(BOOKS_TABLE).delete().eq('id', id)
     if (removed.error) throw removed.error
     await db.storage.from(COVERS_BUCKET).remove([row.cover_path, row.thumb_path])
   },

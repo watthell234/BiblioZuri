@@ -10,4 +10,8 @@ export const supabase: SupabaseClient | null = hasSupabase
   ? createClient(url as string, key as string, { auth: { persistSession: false } })
   : null
 
-export const COVERS_BUCKET = 'covers'
+// Prefixed because BiblioZuri currently shares a Supabase project with another
+// app; the prefix keeps its tables and bucket unambiguous alongside that app's own.
+export const COVERS_BUCKET = 'biblio-covers'
+export const SHELVES_TABLE = 'biblio_shelves'
+export const BOOKS_TABLE = 'biblio_books'
