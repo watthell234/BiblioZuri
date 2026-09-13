@@ -4,14 +4,20 @@ import type { Book, Shelf } from '../lib/types'
 
 type Props = {
   shelf: Shelf
+  /** The books to draw on the tree — already filtered by the room's read/unread toggle. */
   books: Book[]
+  /** Every book on this shelf, filter aside — feeds the lamp count and the "browse all" sheet. */
+  allBooks: Book[]
   onOpenBook: (book: Book) => void
   onAddHere: (shelf: Shelf) => void
   onRename: (shelf: Shelf) => void
+  onShowAll: (shelf: Shelf) => void
 }
 
 const BOOKS_PER_ROW = 3
 const MIN_ROWS = 3
+const VISIBLE_ROWS = 4
+const CAP = VISIBLE_ROWS * BOOKS_PER_ROW
 
 function chunk(books: Book[]): Book[][] {
   const rows: Book[][] = []
@@ -27,14 +33,30 @@ function chunk(books: Book[]): Book[][] {
  * flares out at the canopy and tapers toward the floor, with a dark green
  * recess behind the shelves.
  */
-export default function TreeShelf({ shelf, books, onOpenBook, onAddHere, onRename }: Props) {
-  const rows = chunk(books)
-  const read = books.filter((book) => book.isRead).length
+export default function TreeShelf({
+  shelf,
+  books,
+  allBooks,
+  onOpenBook,
+  onAddHere,
+  onRename,
+  onShowAll,
+}: Props) {
+  const overflow = books.length > CAP
+  const visibleBooks = overflow ? books.slice(0, CAP - 1) : books
+  const remaining = overflow ? books.length - visibleBooks.length : 0
+  const rows = chunk(visibleBooks)
   const firstEmptyRow = rows.findIndex((row) => row.length === 0)
+  const read = allBooks.filter((book) => book.isRead).length
+
+  // The shelf really is empty vs. every book on it just being filtered out
+  // (e.g. "unread only" with nothing left to read here) — those need
+  // different messages in the first empty row.
+  const filteredEmpty = allBooks.length > 0 && books.length === 0
 
   return (
     <section className="tree" style={{ ['--accent' as string]: shelf.accent }}>
-      <ShelfProgress read={read} total={books.length} accent={shelf.accent} />
+      <ShelfProgress read={read} total={allBooks.length} accent={shelf.accent} />
 
       <div className="tree__frame">
         <div className="tree__cavity">
@@ -52,7 +74,10 @@ export default function TreeShelf({ shelf, books, onOpenBook, onAddHere, onRenam
                   {row.map((book) => (
                     <BookSpine key={book.id} book={book} onOpen={onOpenBook} />
                   ))}
-                  {row.length === 0 && index === firstEmptyRow && (
+                  {row.length === 0 && index === firstEmptyRow && filteredEmpty && (
+                    <span className="plank__empty">All caught up here 🌟</span>
+                  )}
+                  {row.length === 0 && index === firstEmptyRow && !filteredEmpty && (
                     <button
                       type="button"
                       className="ghost-book"
@@ -60,6 +85,16 @@ export default function TreeShelf({ shelf, books, onOpenBook, onAddHere, onRenam
                       aria-label={`Add a book to ${shelf.name}`}
                     >
                       <span aria-hidden="true">+</span>
+                    </button>
+                  )}
+                  {overflow && index === rows.length - 1 && (
+                    <button
+                      type="button"
+                      className="more-tile"
+                      onClick={() => onShowAll(shelf)}
+                      aria-label={`Show ${remaining} more books on ${shelf.name}`}
+                    >
+                      +{remaining}
                     </button>
                   )}
                 </div>
