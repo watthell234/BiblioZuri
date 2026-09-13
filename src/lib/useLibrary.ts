@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { backend, loadLibrary } from './library'
+import { drainTitleQueue } from './titleQueue'
 import type { Book, Library } from './types'
 
 type State = {
@@ -41,6 +42,14 @@ export function useLibrary() {
       return { ...prev, library: { ...prev.library, books } }
     })
   }, [])
+
+  // Read the cover photo of any book still waiting for a title. Runs on first
+  // load (which backfills the books that were here before) and again whenever a
+  // book is added — always in the background, never blocking the UI.
+  useEffect(() => {
+    if (state.status !== 'ready') return
+    drainTitleQueue(state.library.books, upsertBook)
+  }, [state.status, state.library.books, upsertBook])
 
   const removeBook = useCallback((id: string) => {
     setState((prev) => ({

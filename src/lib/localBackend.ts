@@ -63,7 +63,15 @@ function readMeta(): Library {
     const raw = localStorage.getItem(META_KEY)
     if (!raw) return { shelves: [], books: [] }
     const parsed = JSON.parse(raw) as Library
-    return { shelves: parsed.shelves ?? [], books: parsed.books ?? [] }
+    return {
+      shelves: parsed.shelves ?? [],
+      // Books stored before title extraction existed have neither field.
+      books: (parsed.books ?? []).map((book) => ({
+        ...book,
+        extractedTitle: book.extractedTitle ?? null,
+        titleStatus: book.titleStatus ?? 'skipped',
+      })),
+    }
   } catch {
     return { shelves: [], books: [] }
   }
@@ -119,6 +127,9 @@ export const localBackend: Backend = {
       isRead: false,
       readAt: null,
       position: library.books.filter((item) => item.shelfId === shelfId).length,
+      extractedTitle: null,
+      // Reading a cover needs the edge function, which only the cloud library has.
+      titleStatus: 'skipped',
     }
     library.books.push(book)
     writeMeta(library)
@@ -141,6 +152,11 @@ export const localBackend: Backend = {
     library.books = library.books.filter((item) => item.id !== id)
     writeMeta(library)
     if (book) await deleteBlobs([book.coverPath, book.thumbPath])
+  },
+
+  async extractTitle() {
+    // No edge function to call — this library only ever searches typed titles.
+    return null
   },
 
   async urlFor(path) {
