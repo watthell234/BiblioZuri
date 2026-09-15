@@ -5,9 +5,16 @@ export type Shelf = {
   position: number
 }
 
+/**
+ * How far along the background read of a book's cover photo is.
+ * 'done' does not promise a title — some covers have nothing legible.
+ */
+export type TitleStatus = 'pending' | 'running' | 'done' | 'failed' | 'skipped'
+
 export type Book = {
   id: string
   shelfId: string
+  /** What a parent typed in, if they typed anything. */
   title: string | null
   coverPath: string
   thumbPath: string
@@ -15,6 +22,9 @@ export type Book = {
   isRead: boolean
   readAt: string | null
   position: number
+  /** Read off the cover photo in the background. Searched, never displayed. */
+  extractedTitle: string | null
+  titleStatus: TitleStatus
 }
 
 export type Library = {
@@ -37,6 +47,11 @@ export type Backend = {
   }): Promise<Book>
   setRead(id: string, isRead: boolean): Promise<Book>
   deleteBook(id: string): Promise<void>
+  /**
+   * Read this book's title off its cover photo and store it for search.
+   * Returns the updated book, or null where extraction isn't available.
+   */
+  extractTitle(id: string): Promise<Book | null>
   /** Resolves a stored path to something an <img src> can use. */
   urlFor(path: string): Promise<string>
 }

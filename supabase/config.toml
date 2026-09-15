@@ -1,0 +1,4 @@
+# The app has no login at all, so the browser calls this function with the
+# publishable key and no user JWT. See the README on what bounds the cost.
+[functions.extract-title]
+verify_jwt = false

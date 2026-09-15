@@ -1,6 +1,6 @@
 import { BOOKS_TABLE, COVERS_BUCKET, SHELVES_TABLE, supabase } from './supabase'
 import { pickAccent, pickSpineColor } from './palette'
-import type { Backend, Book, Shelf } from './types'
+import type { Backend, Book, Shelf, TitleStatus } from './types'
 
 type ShelfRow = { id: string; name: string; accent: string; position: number }
 type BookRow = {
@@ -13,6 +13,8 @@ type BookRow = {
   is_read: boolean
   read_at: string | null
   position: number
+  extracted_title: string | null
+  title_status: TitleStatus
 }
 
 const toShelf = (row: ShelfRow): Shelf => ({
@@ -32,6 +34,8 @@ const toBook = (row: BookRow): Book => ({
   isRead: row.is_read,
   readAt: row.read_at,
   position: row.position,
+  extractedTitle: row.extracted_title,
+  titleStatus: row.title_status,
 })
 
 function client() {
@@ -132,6 +136,21 @@ export const supabaseBackend: Backend = {
     const removed = await db.from(BOOKS_TABLE).delete().eq('id', id)
     if (removed.error) throw removed.error
     await db.storage.from(COVERS_BUCKET).remove([row.cover_path, row.thumb_path])
+  },
+
+  async extractTitle(id) {
+    const db = client()
+    const { error } = await db.functions.invoke('extract-title', { body: { bookId: id } })
+    if (error) throw error
+    // The function writes the row; re-read it so the UI holds the stored truth
+    // rather than whatever the response happened to echo back.
+    const { data, error: readError } = await db
+      .from(BOOKS_TABLE)
+      .select('*')
+      .eq('id', id)
+      .maybeSingle()
+    if (readError) throw readError
+    return data ? toBook(data as BookRow) : null
   },
 
   async urlFor(path) {

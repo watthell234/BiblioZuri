@@ -4,8 +4,9 @@ import AddBookSheet from './components/AddBookSheet'
 import BookDetail from './components/BookDetail'
 import ShelfSheet from './components/ShelfSheet'
 import Celebration from './components/Celebration'
+import SearchResults from './components/SearchResults'
 import { useLibrary } from './lib/useLibrary'
-import { backend, booksOnShelf, isCloud } from './lib/library'
+import { backend, booksOnShelf, isCloud, searchBooks } from './lib/library'
 import type { Book, Shelf } from './lib/types'
 
 export default function App() {
@@ -15,6 +16,13 @@ export default function App() {
   const [browsingShelf, setBrowsingShelf] = useState<Shelf | null>(null)
   const [filter, setFilter] = useState<ReadFilter>('all')
   const [celebration, setCelebration] = useState(0)
+  const [query, setQuery] = useState('')
+
+  const searching = query.trim().length > 0
+  const matches = useMemo(
+    () => (searching ? searchBooks(library, query) : []),
+    [library, query, searching],
+  )
 
   const totals = useMemo(() => {
     const read = library.books.filter((book) => book.isRead).length
@@ -60,13 +68,23 @@ export default function App() {
             </button>
           )}
         </div>
-        <button
-          type="button"
-          className="pill pill--primary topbar__add"
-          onClick={() => setAdding({ shelfId: null })}
-        >
-          📸 Add a book
-        </button>
+        <div className="topbar__tools">
+          <input
+            type="search"
+            className="topbar__search"
+            value={query}
+            placeholder="Search books"
+            aria-label="Search books by title"
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <button
+            type="button"
+            className="pill pill--primary topbar__add"
+            onClick={() => setAdding({ shelfId: null })}
+          >
+            📸 Add a book
+          </button>
+        </div>
       </header>
 
       {status === 'loading' && <p className="notice">Opening the library…</p>}
@@ -76,7 +94,16 @@ export default function App() {
         </p>
       )}
 
-      {status === 'ready' && (
+      {status === 'ready' && searching && (
+        <SearchResults
+          books={matches}
+          shelves={library.shelves}
+          query={query.trim()}
+          onOpenBook={setOpenBook}
+        />
+      )}
+
+      {status === 'ready' && !searching && (
         <LibraryRoom
           library={library}
           filter={filter}

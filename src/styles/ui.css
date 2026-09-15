@@ -110,6 +110,32 @@
   font-size: 0.95rem;
 }
 
+.topbar__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.topbar__search {
+  width: clamp(9rem, 34vw, 16rem);
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgba(253, 247, 234, 0.28);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--cream);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.topbar__search::placeholder {
+  color: rgba(253, 247, 234, 0.6);
+}
+
+.topbar__search:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 1px;
+}
+
 .topbar__add {
   display: none;
 }
@@ -118,6 +144,42 @@
   .topbar__add {
     display: inline-flex;
   }
+}
+
+/* Search results: the matching books lifted off their trees into a plain row. */
+.results {
+  position: relative;
+  z-index: 2;
+  padding: 0.5rem clamp(1rem, 4vw, 2rem) 6rem;
+  color: var(--cream);
+}
+
+.results__count {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+.results__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 1.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.results__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.results__shelf {
+  font-size: 0.78rem;
+  text-align: center;
+  opacity: 0.7;
 }
 
 .icon-button {

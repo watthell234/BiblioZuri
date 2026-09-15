@@ -1,7 +1,7 @@
 import { hasSupabase } from './supabase'
 import { supabaseBackend } from './supabaseBackend'
 import { localBackend } from './localBackend'
-import type { Backend, Library } from './types'
+import type { Backend, Book, Library } from './types'
 
 /**
  * The single seam between the UI and wherever the library is stored.
@@ -34,4 +34,36 @@ export function shelfProgress(library: Library, shelfId: string) {
   const books = booksOnShelf(library, shelfId)
   const read = books.filter((book) => book.isRead).length
   return { read, total: books.length }
+}
+
+/**
+ * Fold a title down to something two people typing loosely will still match on:
+ * no case, no accents, no punctuation, single spaces.
+ *
+ * Apostrophes are dropped rather than spaced out, so that a cover reading
+ * "Gruffalo's Child" is still found by someone typing "gruffalos child".
+ */
+function normalize(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/['\u2018\u2019]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+}
+
+/**
+ * Books whose title matches the query — the one a parent typed, or the one read
+ * off the cover photo in the background. The extracted title is only ever
+ * matched against; it is never shown.
+ */
+export function searchBooks(library: Library, query: string): Book[] {
+  const needle = normalize(query)
+  if (!needle) return []
+  return library.books.filter((book) =>
+    [book.title, book.extractedTitle].some(
+      (title) => title && normalize(title).includes(needle),
+    ),
+  )
 }
