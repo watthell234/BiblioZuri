@@ -2,21 +2,27 @@ import TreeShelf from './TreeShelf'
 import { booksOnShelf } from '../lib/library'
 import type { Book, Library, Shelf } from '../lib/types'
 
+export type ReadFilter = 'all' | 'unread'
+
 type Props = {
   library: Library
+  filter: ReadFilter
   onOpenBook: (book: Book) => void
   onAddHere: (shelf: Shelf) => void
   onRename: (shelf: Shelf) => void
   onAddShelf: () => void
+  onShowAll: (shelf: Shelf) => void
 }
 
 /** The room itself: sky ceiling, canopy of trees, mossy floor and orange rug. */
 export default function LibraryRoom({
   library,
+  filter,
   onOpenBook,
   onAddHere,
   onRename,
   onAddShelf,
+  onShowAll,
 }: Props) {
   return (
     <div className="room">
@@ -27,16 +33,24 @@ export default function LibraryRoom({
 
       <div className="room__scroll">
         <div className="room__trees">
-          {library.shelves.map((shelf) => (
-            <TreeShelf
-              key={shelf.id}
-              shelf={shelf}
-              books={booksOnShelf(library, shelf.id)}
-              onOpenBook={onOpenBook}
-              onAddHere={onAddHere}
-              onRename={onRename}
-            />
-          ))}
+          {library.shelves.map((shelf) => {
+            const shelfBooks = booksOnShelf(library, shelf.id)
+            const displayBooks =
+              filter === 'unread' ? shelfBooks.filter((book) => !book.isRead) : shelfBooks
+
+            return (
+              <TreeShelf
+                key={shelf.id}
+                shelf={shelf}
+                books={displayBooks}
+                allBooks={shelfBooks}
+                onOpenBook={onOpenBook}
+                onAddHere={onAddHere}
+                onRename={onRename}
+                onShowAll={onShowAll}
+              />
+            )
+          })}
           <button type="button" className="tree tree--new" onClick={onAddShelf}>
             <span className="tree--new__icon" aria-hidden="true">🌱</span>
             <span className="tree--new__label">Plant a new set</span>

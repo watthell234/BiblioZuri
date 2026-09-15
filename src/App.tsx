@@ -1,17 +1,20 @@
 import { useCallback, useMemo, useState } from 'react'
-import LibraryRoom from './components/LibraryRoom'
+import LibraryRoom, { type ReadFilter } from './components/LibraryRoom'
 import AddBookSheet from './components/AddBookSheet'
 import BookDetail from './components/BookDetail'
+import ShelfSheet from './components/ShelfSheet'
 import Celebration from './components/Celebration'
 import SearchResults from './components/SearchResults'
 import { useLibrary } from './lib/useLibrary'
-import { backend, isCloud, searchBooks } from './lib/library'
+import { backend, booksOnShelf, isCloud, searchBooks } from './lib/library'
 import type { Book, Shelf } from './lib/types'
 
 export default function App() {
   const { library, status, error, upsertBook, removeBook, addShelf, renameShelf } = useLibrary()
   const [adding, setAdding] = useState<{ shelfId: string | null } | null>(null)
   const [openBook, setOpenBook] = useState<Book | null>(null)
+  const [browsingShelf, setBrowsingShelf] = useState<Shelf | null>(null)
+  const [filter, setFilter] = useState<ReadFilter>('all')
   const [celebration, setCelebration] = useState(0)
   const [query, setQuery] = useState('')
 
@@ -54,6 +57,16 @@ export default function App() {
               ? 'Take a picture of a book to begin'
               : `${totals.read} of ${totals.total} books read`}
           </p>
+          {totals.total > 0 && (
+            <button
+              type="button"
+              className={`chip topbar__filter ${filter === 'unread' ? 'chip--active' : ''}`}
+              aria-pressed={filter === 'unread'}
+              onClick={() => setFilter((current) => (current === 'unread' ? 'all' : 'unread'))}
+            >
+              Unread only
+            </button>
+          )}
         </div>
         <div className="topbar__tools">
           <input
@@ -93,10 +106,12 @@ export default function App() {
       {status === 'ready' && !searching && (
         <LibraryRoom
           library={library}
+          filter={filter}
           onOpenBook={setOpenBook}
           onAddHere={(shelf) => setAdding({ shelfId: shelf.id })}
           onRename={handleRename}
           onAddShelf={handleAddShelf}
+          onShowAll={setBrowsingShelf}
         />
       )}
 
@@ -132,6 +147,18 @@ export default function App() {
           }}
           onDeleted={removeBook}
           onCelebrate={() => setCelebration((value) => value + 1)}
+        />
+      )}
+
+      {browsingShelf && (
+        <ShelfSheet
+          shelf={browsingShelf}
+          books={booksOnShelf(library, browsingShelf.id)}
+          onOpenBook={(book) => {
+            setBrowsingShelf(null)
+            setOpenBook(book)
+          }}
+          onClose={() => setBrowsingShelf(null)}
         />
       )}
 

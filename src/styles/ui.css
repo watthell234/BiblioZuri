@@ -24,6 +24,38 @@
   opacity: 0.75;
 }
 
+/* Small toggle buttons — filter chips in the topbar and the shelf sheet. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0.35rem 0.85rem;
+  border: 2px solid rgba(253, 247, 234, 0.35);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.chip:hover {
+  border-color: rgba(253, 247, 234, 0.6);
+}
+
+.chip--active {
+  background: var(--leaf, #2f8f79);
+  border-color: var(--leaf, #2f8f79);
+  color: #fff;
+}
+
+.topbar__filter {
+  margin-top: 0.5rem;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -341,6 +373,95 @@
 .field select:focus {
   outline: none;
   border-color: var(--leaf);
+}
+
+/* ---------- Shelf index sheet ---------- */
+
+.shelf-sheet__filters {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* The sheet is on a light background, unlike the topbar's dark chrome. */
+.shelf-sheet__filters .chip {
+  border-color: rgba(0, 0, 0, 0.18);
+  color: var(--ink);
+}
+
+.shelf-sheet__filters .chip:hover {
+  border-color: rgba(0, 0, 0, 0.32);
+}
+
+.shelf-sheet__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 0.6rem;
+  overflow-y: auto;
+}
+
+.shelf-sheet__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.shelf-sheet__thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.shelf-sheet__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shelf-sheet__thumb--empty {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.06) 0 6px,
+    rgba(0, 0, 0, 0.02) 6px 12px
+  );
+}
+
+.shelf-sheet__leaf {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 0.85rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+.shelf-sheet__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.shelf-sheet__empty {
+  margin: 1.5rem 0;
+  color: #7a6a55;
+  text-align: center;
 }
 
 /* ---------- Celebration ---------- */

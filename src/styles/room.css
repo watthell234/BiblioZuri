@@ -259,6 +259,44 @@
   color: #fff;
 }
 
+/* Every book that didn't fit on the tree, folded into one tappable count. */
+.more-tile {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 78px;
+  min-height: 44px;
+  border: none;
+  border-radius: 3px 6px 6px 3px;
+  background: linear-gradient(180deg, #2f8f79, #14563c);
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.more-tile:hover,
+.more-tile:focus-visible {
+  transform: translateY(-4px);
+  filter: brightness(1.1);
+  outline: none;
+}
+
+/* Stands in for the ghost-book when a filter, not an empty shelf, is why nothing shows. */
+.plank__empty {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  color: rgba(253, 247, 234, 0.75);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 .tree__name {
   margin-top: 0.75rem;
   border: none;
